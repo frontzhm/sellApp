@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <v-header></v-header>
-    <div class="tab">
+    <div class="tab border-1px">
       <div class="tab-item">
         <!-- 点击相应的，加上了类名router-link-exact-active router-link-active -->
         <!-- 使用 router-link 组件来导航. -->

@@ -8,6 +8,8 @@ import App from './App'
 import goods from 'components/goods/goods'
 import ratings from 'components/ratings/ratings'
 import seller from 'components/seller/seller'
+// webpack的特性 可以在js里引入样式
+import index from 'common/stylus/index.styl'
 
 Vue.use(VueRouter)
 Vue.config.productionTip = false
