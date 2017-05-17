@@ -22,7 +22,7 @@
 
 <script>
 export default {
-  name: 'header1',
+  name: 'header',
   data () {
     return {
       msg: 'minmin App'

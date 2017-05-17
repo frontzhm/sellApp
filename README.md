@@ -33,3 +33,4 @@ For detailed explanation on how things work, checkout the [guide](http://vuejs-t
 1. 建立完整的目录结构，以及引入相应的图片和fonts，reset
 2. mock数据（data.json）和相应的api（build/dev-server.js）
 3. index.html加上viewport和reset
+4. 
