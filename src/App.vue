@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <v-header></v-header>
+    <v-header :seller="seller"></v-header>
     <div class="tab border-1px">
       <div class="tab-item">
         <!-- 点击相应的，加上了类名router-link-exact-active router-link-active -->
@@ -27,12 +27,33 @@
 </template>
 
 <script>
+// <script type="text/ecmascript-6">
 import header from './components/header/header'
-
+// 将状态码常量化，一旦有改变直接改这里即可
+const ERR_OK = 0
 export default {
   name: 'app',
   components: {
     'v-header': header
+  },
+  data() {
+    return {
+      // vue实例有生命周期
+      seller:{
+
+      }
+    }
+  },
+  created() {
+    this.$http.get('/api/seller').then((response) => {
+      // 及时查版本
+      response = response.body
+      // 判断状态,ERR_OK语义化
+      if (response.errno === ERR_OK) {
+        this.seller = response.data
+        console.log(this.seller)
+      }
+    })
   }
 }
 

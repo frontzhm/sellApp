@@ -3,6 +3,7 @@
 import Vue from 'vue'
 // 因为vue-router的package.json那边name是这个
 import VueRouter from 'vue-router'
+import VueResource from 'vue-resource'
 import App from './App'
 // 在webpack中已经有了路径的别名配置，所以这里的components其实是定义好的路径而不单纯是components
 import goods from 'components/goods/goods'
@@ -12,6 +13,7 @@ import seller from 'components/seller/seller'
 import index from 'common/stylus/index.styl'
 
 Vue.use(VueRouter)
+Vue.use(VueResource)
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
