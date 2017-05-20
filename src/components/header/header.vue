@@ -31,33 +31,51 @@
     <div class="background">
       <img :src="seller.avatar" width="100%" height="100%">
     </div>
-    <div v-show="detailShow" class="detail">
-      <div class="detail-wrapper clearfix">
-        <div class="detail-main">
-          <div class="name">
-            {{seller.name}}
-          </div>
-          <div class="star-wrapper">
-            <!-- 组件里 定义size是数字类型，所以这里用： -->
-            <star :size="48" :score="seller.score"></star>
-          </div>
-          <div class="title">
-            <!-- 这里用block元素 不然有兼容问题 -->
-            <div class="line"></div>
-            <div class="text">综合评价</div>
-            <div class="line"></div>
+    <transition name="fade">
+      <div v-show="detailShow" class="detail">
+        <div class="detail-wrapper clearfix">
+          <div class="detail-main">
+            <div class="name">
+              {{seller.name}}
+            </div>
+            <div class="star-wrapper">
+              <!-- 组件里 定义size是数字类型，所以这里用： -->
+              <star :size="48" :score="seller.score"></star>
+            </div>
+            <line-title-line></line-title-line> 
+            <!-- <div class="title">
+              这里用block元素 不然有兼容问题
+              <div class="line"></div>
+              <div class="text">综合评价</div>
+              <div class="line"></div>
+            </div> -->
+            <ul v-if="seller.supports" class="supports">
+              <li v-for="(support,index) in seller.supports" class="support-item">
+                <span class="icon" :class="classMap[support.type]"></span>
+                <span class="text">{{support.description}}</span>
+              </li>
+            </ul>
+            <line-title-line></line-title-line>
+            <div class="bulletin">
+              <p class="content">
+                {{seller.bulletin}}
+              </p>
+            </div>
+
           </div>
         </div>
+        <div class="detail-close" @click="hideDetail">
+          <i class="icon-close"></i>
+        </div>
       </div>
-      <div class="detail-close">
-        <i class="icon-close"></i>
-      </div>
-    </div>
+    </transition>
+
   </div>
 </template>
 
 <script>
 import star from 'components/star/star'
+import lineTitleLine from 'components/line-title-line/line-title-line'
 export default {
   name: 'header',
   // 父组件接受传递过来的值
@@ -75,11 +93,15 @@ export default {
   methods: {
     showDetail() {
       this.detailShow = true
+    },
+    hideDetail() {
+      this.detailShow = false
     }
   },
   // 引入 并且注册
   components:{
-    star
+    star,
+    lineTitleLine
   }
 }
 </script>
@@ -214,6 +236,12 @@ export default {
     height 100%
     overflow auto
     background-color: rgba(1,17,27,0.8)
+    // 只有ios可以实现这个属性 
+    backdrop-filter blur(10px)
+    &.fade-enter-active,&.fade-leave-active
+      transition all 0.5s ease
+    &.fade-enter,&.fade-leave-active
+      opacity 0
     .detail-wrapper
       min-height: 100%
       width 100%
@@ -227,23 +255,44 @@ export default {
       .star-wrapper
         margin-top 16px
         text-align center
-      .title
-        display flex
-        align-items center
-        margin 28px 9.6% 0
-        // margin 30px auto 24px auto
-      .line
-        flex 1
-        height 1px
-        background-color: rgba(255, 255, 255, 0.2)
-        // position relative
-        // top -6px
-        // border-bottom 1px solid rgba(255,255,255,0.2)
-      .text
-        padding-left 12px
-        padding-right 12px
-        font-size 14px
-        font-weight 700
+      .supports
+        width 74.4%
+        margin 24px auto 0
+        .support-item
+          margin-bottom 12px
+          font-size 0
+          &:last-child
+            margin-bottom 0
+          .icon
+            display inline-block
+            vertical-align top
+            width 16px
+            height 16px
+            background-size 16px 16px
+            background-repeat no-repeat
+            // decrease,discount,guarantee,invoice,special
+            &.decrease
+              bg-image('decrease_2')
+            &.discount
+              bg-image('discount_2')
+            &.guarantee
+              bg-image('guarantee_2')
+            &.invoice
+              bg-image('invoice_2')
+            &.special
+              bg-image('special_2')
+          .text
+            margin-left: 6px
+            // 有时候设计稿可能不对，这里文字和图片高度一致
+            line-height: 16px
+            font-size: 12px
+      .bulletin
+        .content
+          width 74.4%
+          margin 24px auto 0
+          line-height 2
+          font-size 12px
+               
     .detail-close
       position:relative
       width: 32px
