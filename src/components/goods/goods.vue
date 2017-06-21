@@ -34,6 +34,9 @@
 								<div class="price">
 									<span class="now">¥{{food.price}}</span><del class="old" v-if="food.oldPrice">¥{{food.oldPrice}}</del> 
 								</div>
+								<div class="cartcontrol-wrapper">
+									<cartcontrol :food="food" v-on:addCart="_drop($event)"></cartcontrol>
+								</div>
 							</div>
 						</li>
 					</ul>
@@ -41,7 +44,7 @@
 			</ul>
 		</div>
 		<!-- 需要配送费 和起送费 -->
-		<shopcart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
+		<shopcart ref="shopcartInstance" :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
 
 	</div>
 </template>
@@ -50,6 +53,7 @@
 <script>
 	import BScroll from 'better-scroll'
 	import shopcart from 'components/shopcart/shopcart'
+	import cartcontrol from 'components/cartcontrol/cartcontrol'
 	const ERR_OK = 0 
 	export default {
 		// seller需要从app.vue router-view传进来
@@ -76,6 +80,18 @@
 					}
 				}
 				return 0
+			},
+			// 由goods决定的
+			selectFoods() {
+				let foods = []
+				this.goods.forEach((good) => {
+					good.foods.forEach((food) => {
+						if (food.count) {
+							foods.push(food)
+						}
+					})
+				})
+				return foods
 			}
 		},
 		created () {
@@ -100,7 +116,8 @@
 				})
 				this.foodsScroll = new BScroll(this.$refs.foodsWrapper, {
 					// 希望滚动的时候实时告诉我们滚动的值
-					probeType: 3
+					probeType: 3,
+					click: true
 				})
 				// 监听滚动事件
 				this.foodsScroll.on('scroll', (pos) => {
@@ -129,11 +146,18 @@
 				let foodList = this.$refs.foodsWrapper.getElementsByClassName('food-list-hook')
 				let el = foodList[index]
 				this.foodsScroll.scrollToElement(el, 300)
+			},
+			_drop($event) {
+				// 优化动画，异步执行下落动画，$nextTick在DOM渲染之后才执行,
+				this.$nextTick(() => {
+					this.$refs.shopcartInstance.drop($event)
+				})
 			}
 
 		},
 		components:{
-			shopcart
+			shopcart,
+			cartcontrol
 		}
 	}
 </script>
@@ -245,4 +269,8 @@
 							margin-left 8px
 							font-size 10px
 							color rgb(147,153,159)
+					.cartcontrol-wrapper
+						position absolute
+						right 0
+						bottom 12px
 </style>
