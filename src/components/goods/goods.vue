@@ -1,51 +1,54 @@
 <template>
-	<div class="goods">
-		<div class="menu-wrapper" ref="menuWrapper">
-			<ul>
-				<li v-for="(item,index) in goods" class="menu-item" :class="{current:currentIndex===index}" @click="selectMenu(index,$event)">
-					<span class="text border-1px">
-						<span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
-					</span>
-				</li>
-			</ul>
+	<div>
+		<div class="goods">
+			<div class="menu-wrapper" ref="menuWrapper">
+				<ul>
+					<li v-for="(item,index) in goods" class="menu-item" :class="{current:currentIndex===index}" @click="selectMenu(index,$event)">
+						<span class="text border-1px">
+							<span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>{{item.name}}
+						</span>
+					</li>
+				</ul>
+			</div>
+			<div class="foods-wrapper" ref="foodsWrapper">
+				<ul>
+					<li v-for="item in goods" class="food-list food-list-hook">
+						<h1 class="title">
+							{{item.name}}
+						</h1>
+						<ul>
+							<li  @click="selectFood(food,$event)" v-for="food in item.foods" class="food-item border-1px">
+								<div class="icon">
+									<img :src="food.icon" width="57" :alt="food.name">
+								</div>
+								<div class="content">
+									<h2 class="name">
+										{{food.name}}
+									</h2>
+									<p v-if="food.description" class="desc">
+										{{food.description}}
+									</p>
+									<div class="extra">
+									<!-- 懒得处理空格的时候就这样。。 -->
+										<span>月售{{food.sellCount}}</span><span class="rating">好评率{{food.rating}}%</span> 
+									</div>
+									<div class="price">
+										<span class="now">¥{{food.price}}</span><del class="old" v-if="food.oldPrice">¥{{food.oldPrice}}</del> 
+									</div>
+									<div class="cartcontrol-wrapper">
+										<cartcontrol :food="food" v-on:addCart="_drop($event)"></cartcontrol>
+									</div>
+								</div>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+			<!-- 需要配送费 和起送费 -->
+			<shopcart ref="shopcartInstance" :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
+		
 		</div>
-		<div class="foods-wrapper" ref="foodsWrapper">
-			<ul>
-				<li v-for="item in goods" class="food-list food-list-hook">
-					<h1 class="title">
-						{{item.name}}
-					</h1>
-					<ul>
-						<li v-for="food in item.foods" class="food-item border-1px">
-							<div class="icon">
-								<img :src="food.icon" width="57" :alt="food.name">
-							</div>
-							<div class="content">
-								<h2 class="name">
-									{{food.name}}
-								</h2>
-								<p v-if="food.description" class="desc">
-									{{food.description}}
-								</p>
-								<div class="extra">
-								<!-- 懒得处理空格的时候就这样。。 -->
-									<span>月售{{food.sellCount}}</span><span class="rating">好评率{{food.rating}}%</span> 
-								</div>
-								<div class="price">
-									<span class="now">¥{{food.price}}</span><del class="old" v-if="food.oldPrice">¥{{food.oldPrice}}</del> 
-								</div>
-								<div class="cartcontrol-wrapper">
-									<cartcontrol :food="food" v-on:addCart="_drop($event)"></cartcontrol>
-								</div>
-							</div>
-						</li>
-					</ul>
-				</li>
-			</ul>
-		</div>
-		<!-- 需要配送费 和起送费 -->
-		<shopcart ref="shopcartInstance" :select-foods="selectFoods" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shopcart>
-
+		<food :food="selectedFood" ref="food"></food>
 	</div>
 </template>
 
@@ -54,6 +57,7 @@
 	import BScroll from 'better-scroll'
 	import shopcart from 'components/shopcart/shopcart'
 	import cartcontrol from 'components/cartcontrol/cartcontrol'
+	import food from 'components/food/food'
 	const ERR_OK = 0 
 	export default {
 		// seller需要从app.vue router-view传进来
@@ -66,7 +70,10 @@
 			return {
 				goods: [],
 				listHeight: [],
-				scrollY: 0
+				scrollY: 0,
+				selectedFood: {
+
+				}
 			}
 		},
 		computed:{
@@ -152,12 +159,20 @@
 				this.$nextTick(() => {
 					this.$refs.shopcartInstance.drop($event)
 				})
+			},
+			selectFood(food, event) {
+				if (!event._constructed) {
+					return
+				}
+				this.selectedFood = food
+				this.$refs.food.show()
 			}
 
 		},
 		components:{
 			shopcart,
-			cartcontrol
+			cartcontrol,
+			food
 		}
 	}
 </script>
