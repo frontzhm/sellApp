@@ -53,6 +53,8 @@ const app = new Vue({
   components: { App },
   router
 })
+// 如果 Vue 实例在实例化时没有收到 el 选项，则它处于“未挂载”状态，
+// 没有关联的 DOM 元素。可以使用 vm.$mount() 手动地挂载一个未挂载的实例。
 app.$mount('#app')
 // vue1.0 router.go('/goods')
 // 默认去哪个页面
